@@ -1,6 +1,7 @@
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "EpicMegaJam2020/Actors/Gun.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -30,11 +31,23 @@ void APlayerCharacter::BeginPlay()
     {
         PlayerControllerRef->bShowMouseCursor = true;
     }
+    SpawnGun();
+}
+
+void APlayerCharacter::SpawnGun() 
+{
+    // Spawn our BP_Gun
+    Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+    // Attach it to our mesh's WeaponSocket
+    Gun->AttachToComponent(MainMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+    // Set the owner to this class
+    Gun->SetOwner(this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+    PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Shoot);
 }
 
 void APlayerCharacter::Tick(float DeltaTime) 
@@ -75,4 +88,16 @@ void APlayerCharacter::Rotate(FVector LookAtTarget)
     FRotator Rotator = Correction.Rotation();
     // Set our rotation to match the above vector
     MainMesh->SetWorldRotation(Rotator);
+}
+
+void APlayerCharacter::Shoot() 
+{
+    // Raycast out from our mouse position into the world
+    FHitResult HitResult;
+    if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
+    {
+        // Pass this location to the Gun::Shoot method
+        FVector Target = FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, Gun->GetActorLocation().Z);
+        Gun->Shoot(Target);
+    }
 }

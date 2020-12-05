@@ -4,6 +4,11 @@
 #include "EpicMegaJam2020/Characters/BaseCharacter.h"
 #include "PlayerCharacter.generated.h"
 
+class AGun;
+class UCameraComponent;
+class USkeletalMeshComponent;
+class USpringArmComponent;
+
 UCLASS()
 class EPICMEGAJAM2020_API APlayerCharacter : public ABaseCharacter
 {
@@ -19,11 +24,16 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* PusherMesh;
+	USkeletalMeshComponent* PusherMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* SpringArm;
+	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* Camera;
+	UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AGun> GunClass;
+	UPROPERTY()
+	AGun* Gun;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float MovementSpeed = 100.f;
@@ -34,5 +44,7 @@ private:
 	void MoveForward();
 	void RotateTowardsMouse();
 	void Rotate(FVector LookAtTarget);
+	void SpawnGun();
+	void Shoot();
 
 };
