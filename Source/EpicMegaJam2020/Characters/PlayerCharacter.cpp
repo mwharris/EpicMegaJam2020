@@ -48,6 +48,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
     PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Shoot);
+    PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Released, this, &APlayerCharacter::StopShooting);
 }
 
 void APlayerCharacter::Tick(float DeltaTime) 
@@ -108,8 +109,12 @@ void APlayerCharacter::Shoot()
     }
 }
 
+void APlayerCharacter::StopShooting() 
+{
+    Gun->Release();
+}
+
 void APlayerCharacter::HandleDeath() 
 {
     UE_LOG(LogTemp, Warning, TEXT("Player Character Died!"));
-
 }

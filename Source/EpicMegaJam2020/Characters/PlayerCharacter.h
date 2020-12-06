@@ -47,5 +47,6 @@ private:
 	void Rotate(FVector LookAtTarget);
 	void SpawnGun();
 	void Shoot();
+	void StopShooting();
 
 };

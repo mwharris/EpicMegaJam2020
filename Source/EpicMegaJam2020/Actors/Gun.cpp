@@ -3,6 +3,7 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AGun::AGun()
 {
@@ -22,11 +23,18 @@ void AGun::BeginPlay()
 
 void AGun::Shoot(FVector& LookAtTarget) 
 {
+	// Spawn shooting effects
+	if (ParticleComp == nullptr) 
+	{
+		ParticleComp = UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MeshComponent, TEXT("MuzzleFlashSocket"));
+		ParticleComp->SetRelativeScale3D(FVector(0.5, 0.5, 0.5));
+	}	
+	// Perform our shooting line trace
 	FHitResult HitResult;
 	bool Success = GunTrace(HitResult, LookAtTarget);
 	if (Success) 
 	{
-		// TODO: REMOVE THIS
+		// TODO: REMOVE THIS WHEN SHOOT AND HIT EFFECTS ARE IN
 		const USkeletalMeshSocket* Socket = MeshComponent->GetSocketByName("MuzzleFlashSocket");
 		FVector Start = Socket->GetSocketLocation(MeshComponent);
 		DrawDebugLine(GetWorld(), Start, HitResult.ImpactPoint, FColor::Blue, true, 5.f, 0, 5.f);
@@ -36,6 +44,15 @@ void AGun::Shoot(FVector& LookAtTarget)
 		{
 			UGameplayStatics::ApplyDamage(HitActor, Damage, GetInstigatorController(), this, DamageType);
 		}
+	}
+}
+
+void AGun::Release() 
+{
+	if (ParticleComp != nullptr) 
+	{
+		ParticleComp->DestroyComponent();
+		ParticleComp = nullptr;
 	}
 }
 

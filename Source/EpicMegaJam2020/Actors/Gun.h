@@ -12,6 +12,7 @@ class EPICMEGAJAM2020_API AGun : public AActor
 public:	
 	AGun();
 	void Shoot(FVector& LookAtTarget);
+	void Release();
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,6 +29,13 @@ private:
 	float MaxRange = 5000.f;
 	UPROPERTY(EditAnywhere, Category = "Properties")
 	float Damage = 10.f;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UParticleSystem* MuzzleFlash;
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	USoundBase* MuzzleSound;
+
+	UParticleSystemComponent* ParticleComp;
 
 	bool GunTrace(FHitResult& OutHitResult, FVector& LookAtTarget);
 	AController* GetOwnerController() const;
