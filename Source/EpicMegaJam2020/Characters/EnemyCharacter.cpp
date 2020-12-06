@@ -19,20 +19,23 @@ void AEnemyCharacter::BeginPlay()
     AIController = Cast<AAIController>(GetController());
     PlayerCharacter = Cast<ABaseCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
     MeshComp = GetMesh();
+    AIController->MoveToActor(PlayerCharacter);
 }
 
 void AEnemyCharacter::HandleDeath() 
 {
     Super::HandleDeath();
-    // Set a timer for our death
-    GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyCharacter::DestroySelf, DestroyTime, false);
+    // Deactivate collisions
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    SetActorEnableCollision(false);
     // Stop moving once we've died
     if (AIController) 
     {
         AIController->StopMovement();
     }
-    // Deactivate collisions
-    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    // Set a timer for our death
+    GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyCharacter::DestroySelf, DestroyTime, false);
 }
 
 void AEnemyCharacter::DamagePlayer() 

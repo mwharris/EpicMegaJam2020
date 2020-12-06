@@ -4,6 +4,13 @@
 void AEnemyAIController::BeginPlay() 
 {
     Super::BeginPlay();
-    PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    MoveToActor(PlayerPawn);
+    PlayerActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+}
+
+void AEnemyAIController::OnPossess(APawn* InPawn) 
+{
+    if (PlayerActor != nullptr) 
+    {
+        MoveToActor(PlayerActor);
+    }    
 }

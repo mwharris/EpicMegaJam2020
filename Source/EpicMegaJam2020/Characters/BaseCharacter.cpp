@@ -20,7 +20,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::HandleDeath() 
 {
-	UE_LOG(LogTemp, Warning, TEXT("Base Character Died!"));
+	
 }
 
 float ABaseCharacter::GetHealth() const
