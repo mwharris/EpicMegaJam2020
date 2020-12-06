@@ -21,17 +21,6 @@ void AEnemyCharacter::BeginPlay()
     MeshComp = GetMesh();
 }
 
-/*
-void AEnemyCharacter::Tick(float DeltaTime) 
-{
-    Super::Tick(DeltaTime);
-    if (CanAttack() && MeshComp != nullptr) 
-    {
-        MeshComp->PlayAnimation(AttackMontage, false);
-    }
-}
-*/
-
 void AEnemyCharacter::HandleDeath() 
 {
     Super::HandleDeath();

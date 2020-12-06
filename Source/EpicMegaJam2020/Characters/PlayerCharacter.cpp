@@ -53,8 +53,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Tick(float DeltaTime) 
 {
     Super::Tick(DeltaTime);
-    MoveForward();
-    RotateTowardsMouse();
+    if (!IsDead()) 
+    {
+        MoveForward();
+        RotateTowardsMouse();
+    }
 }
 
 void APlayerCharacter::MoveForward() 
@@ -92,12 +95,21 @@ void APlayerCharacter::Rotate(FVector LookAtTarget)
 
 void APlayerCharacter::Shoot() 
 {
-    // Raycast out from our mouse position into the world
-    FHitResult HitResult;
-    if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
+    if (!IsDead())
     {
-        // Pass this location to the Gun::Shoot method
-        FVector Target = FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, Gun->GetActorLocation().Z);
-        Gun->Shoot(Target);
+        // Raycast out from our mouse position into the world
+        FHitResult HitResult;
+        if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
+        {
+            // Pass this location to the Gun::Shoot method
+            FVector Target = FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, Gun->GetActorLocation().Z);
+            Gun->Shoot(Target);
+        }
     }
+}
+
+void APlayerCharacter::HandleDeath() 
+{
+    UE_LOG(LogTemp, Warning, TEXT("Player Character Died!"));
+
 }

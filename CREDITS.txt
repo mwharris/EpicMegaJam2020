@@ -1,0 +1,7 @@
+------------------------------
+Epic MegaJam 2020 CREDITS
+------------------------------
+- All character models and animations -> Mixamo
+- Gun model -> https://www.turbosquid.com/3d-models/ace-assault-rifle-3d-model-1493100
+- Wheelbarrow model -> https://www.turbosquid.com/3d-models/3d-model-wheel-barrow-wheelbarrow-1402108
+- Unreal Starter Content

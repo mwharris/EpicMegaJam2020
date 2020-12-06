@@ -19,14 +19,9 @@ public:
 	void DamagePlayer();
 	UFUNCTION(BlueprintCallable)
 	bool CanAttack() const;
-	UFUNCTION(BlueprintCallable)
-	bool IsInAttackRange() const;
-	UFUNCTION(BlueprintCallable)
-	bool IsAttacking() const;
 
 	AEnemyCharacter();
 	virtual void HandleDeath() override;
-	// virtual void Tick(float DeltaTime) override;
 	bool IsDead() const;
 
 protected:
@@ -50,5 +45,7 @@ private:
 	FTimerHandle DeathTimerHandle;
 
 	void DestroySelf();
+	bool IsInAttackRange() const;
+	bool IsAttacking() const;
 
 };

@@ -17,7 +17,7 @@ void ANotDoneYetGameMode::ActorDied(AActor* DeadActor)
 {
     if (DeadActor == PlayerCharacter) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("Player Died!"));
+        PlayerCharacter->HandleDeath();
     }
     else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(DeadActor)) 
     {
@@ -29,7 +29,6 @@ void ANotDoneYetGameMode::ActorDamaged(AActor* DamagedActor)
 {
     if (APlayerCharacter* Player = Cast<APlayerCharacter>(DamagedActor)) 
     {
-    	UE_LOG(LogTemp, Warning, TEXT("GameMode: ActorDamaged!"));
         UpdatePlayerHP(Player->GetHealth());
     }
 }

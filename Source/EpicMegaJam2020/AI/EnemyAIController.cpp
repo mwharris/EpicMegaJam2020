@@ -7,4 +7,3 @@ void AEnemyAIController::BeginPlay()
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     MoveToActor(PlayerPawn);
 }
-
