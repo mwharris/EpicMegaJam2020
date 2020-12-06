@@ -23,6 +23,8 @@ private:
 	class USkeletalMeshComponent* MeshComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Properties")
+	TSubclassOf<UDamageType> DamageType;
+	UPROPERTY(EditAnywhere, Category = "Properties")
 	float MaxRange = 5000.f;
 	UPROPERTY(EditAnywhere, Category = "Properties")
 	float Damage = 10.f;

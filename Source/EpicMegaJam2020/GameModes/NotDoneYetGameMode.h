@@ -11,8 +11,17 @@ class EPICMEGAJAM2020_API ANotDoneYetGameMode : public AGameModeBase
 
 public:
 	ANotDoneYetGameMode();
+	void ActorDied(AActor* DeadActor);
+	void ActorDamaged(AActor* DamagedActor);
+
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdatePlayerHP(float NewHP);
 
 private:
 	bool GameOver;
+	class APlayerCharacter* PlayerCharacter;
 	
 };

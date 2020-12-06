@@ -17,3 +17,18 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
+
+void ABaseCharacter::HandleDeath() 
+{
+
+}
+
+float ABaseCharacter::GetHealth() const
+{
+	return HealthComp->GetHealth();
+}
+
+bool ABaseCharacter::IsDead() const
+{
+	return HealthComp->IsDead();
+}

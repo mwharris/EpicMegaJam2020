@@ -12,12 +12,16 @@ class EPICMEGAJAM2020_API ABaseCharacter : public ACharacter
 public:
 	ABaseCharacter();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void HandleDeath();
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDead() const;
 
 protected:
-	virtual void BeginPlay() override;	
-
-private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UHealthComponent* HealthComp;
+
+	virtual void BeginPlay() override;	
 
 };
