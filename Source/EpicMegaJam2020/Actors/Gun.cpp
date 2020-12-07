@@ -24,20 +24,18 @@ void AGun::BeginPlay()
 void AGun::Shoot(FVector& LookAtTarget) 
 {
 	// Spawn shooting effects
-	if (ParticleComp == nullptr) 
+	if (MuzzleParticleComp == nullptr) 
 	{
-		ParticleComp = UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MeshComponent, TEXT("MuzzleFlashSocket"));
-		ParticleComp->SetRelativeScale3D(FVector(0.5, 0.5, 0.5));
+		MuzzleParticleComp = UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MeshComponent, TEXT("MuzzleFlashSocket"));
+		MuzzleParticleComp->SetRelativeScale3D(FVector(0.5, 0.5, 0.5));
 	}	
 	// Perform our shooting line trace
 	FHitResult HitResult;
+	FVector ShotDirection;
 	bool Success = GunTrace(HitResult, LookAtTarget);
 	if (Success) 
 	{
-		// TODO: REMOVE THIS WHEN SHOOT AND HIT EFFECTS ARE IN
-		const USkeletalMeshSocket* Socket = MeshComponent->GetSocketByName("MuzzleFlashSocket");
-		FVector Start = Socket->GetSocketLocation(MeshComponent);
-		DrawDebugLine(GetWorld(), Start, HitResult.ImpactPoint, FColor::Blue, true, 5.f, 0, 5.f);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, HitResult.ImpactPoint, FRotator::ZeroRotator);
 		// Apply damage if we hit an actor that isn't the player
 		AActor* HitActor = HitResult.GetActor();
 		if (HitActor != nullptr && HitActor != GetOwner()) 
@@ -49,10 +47,11 @@ void AGun::Shoot(FVector& LookAtTarget)
 
 void AGun::Release() 
 {
-	if (ParticleComp != nullptr) 
+	// Stop particles if we stopped shooting
+	if (MuzzleParticleComp != nullptr) 
 	{
-		ParticleComp->DestroyComponent();
-		ParticleComp = nullptr;
+		MuzzleParticleComp->DestroyComponent();
+		MuzzleParticleComp = nullptr;
 	}
 }
 
@@ -63,7 +62,8 @@ bool AGun::GunTrace(FHitResult& OutHitResult, FVector& LookAtTarget)
 	// Perform a line trace	from the gun towards our mouse position
 	const USkeletalMeshSocket* Socket = MeshComponent->GetSocketByName("MuzzleFlashSocket");
 	FVector Start = Socket->GetSocketLocation(MeshComponent);
-	FVector End = (LookAtTarget - Start) * MaxRange;
+	FVector Dir = FVector(LookAtTarget - Start);
+	FVector End = Dir * MaxRange;
 	// Ignore hits against the gun and the player
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);

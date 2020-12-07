@@ -5,6 +5,7 @@
 #include "NotDoneYetGameMode.generated.h"
 
 class AEnemyCharacter;
+class ASpawnBox;
 
 UCLASS()
 class EPICMEGAJAM2020_API ANotDoneYetGameMode : public AGameModeBase
@@ -15,6 +16,7 @@ public:
 	ANotDoneYetGameMode();
 	void ActorDied(AActor* DeadActor);
 	void ActorDamaged(AActor* DamagedActor);
+	void SetSpawnBox(ASpawnBox* NewSpawnBox);
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,10 +37,9 @@ private:
 	bool GameOver;
 	class APlayerCharacter* PlayerCharacter;
 	FTimerHandle SpawnTimer;
-	TArray<AActor*> SpawnPoints;
+	ASpawnBox* SpawnBox;
 
 	void SpawnEnemy();
-	int32 RandomSpawnIndex() const;
 	int32 RandomSpawnAmount() const;
 	
 };

@@ -1,48 +1,33 @@
 #include "NotDoneYetGameMode.h"
 #include "Engine/World.h"
-#include "Engine/TargetPoint.h"
 #include "EpicMegaJam2020/Characters/EnemyCharacter.h"
 #include "EpicMegaJam2020/Characters/PlayerCharacter.h"
+#include "EpicMegaJam2020/Actors/SpawnBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
 ANotDoneYetGameMode::ANotDoneYetGameMode() 
 {
-    PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
 }
 
 void ANotDoneYetGameMode::BeginPlay() 
 {
     GameOver = false;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), SpawnPoints);
+    PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    if (PlayerCharacter == nullptr) 
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to find PlayerCharacter!"));
+    }
     GetWorldTimerManager().SetTimer(SpawnTimer, this, &ANotDoneYetGameMode::SpawnEnemy, SpawnTime, true);
 }
 
 void ANotDoneYetGameMode::SpawnEnemy() 
 {
-    if (SpawnPoints.Num() > 0) 
+    if (SpawnBox != nullptr && !GameOver) 
     {
-        int32 SpawnAmount = RandomSpawnAmount();
-        UE_LOG(LogTemp, Warning, TEXT("Spawning %f enemies"), SpawnAmount);
-        for (size_t i = 0; i < SpawnAmount; i++)
-        {
-            // Pick a random spawn point and spawn an enemy there
-            AActor* SpawnPoint = SpawnPoints[RandomSpawnIndex()];
-            FActorSpawnParameters SpawnParams;
-            GetWorld()->SpawnActor<AEnemyCharacter>(EnemyClass, SpawnPoint->GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
-        }
+        SpawnBox->SpawnEnemies(RandomSpawnAmount());
     }
-}
-
-// Pick a random spawn point to spawn at
-int32 ANotDoneYetGameMode::RandomSpawnIndex() const
-{
-    int32 Index = 0;
-    if (SpawnPoints.Num() > 1) 
-    {
-        Index = FMath::RandRange(0, SpawnPoints.Num() - 1);
-    }
-    return Index;
 }
 
 // Pick a random number of enemies to spawn between our min and max
@@ -60,6 +45,8 @@ void ANotDoneYetGameMode::ActorDied(AActor* DeadActor)
 {
     if (DeadActor == PlayerCharacter) 
     {
+        GameOver = true;
+        GetWorldTimerManager().ClearTimer(SpawnTimer);
         PlayerCharacter->HandleDeath();
     }
     else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(DeadActor)) 
@@ -74,4 +61,9 @@ void ANotDoneYetGameMode::ActorDamaged(AActor* DamagedActor)
     {
         UpdatePlayerHP(Player->GetHealth());
     }
+}
+
+void ANotDoneYetGameMode::SetSpawnBox(ASpawnBox* NewSpawnBox) 
+{
+    SpawnBox = NewSpawnBox;
 }
