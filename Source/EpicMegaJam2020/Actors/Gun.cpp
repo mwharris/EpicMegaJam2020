@@ -1,4 +1,5 @@
 #include "Gun.h"
+#include "Components/AudioComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -28,7 +29,12 @@ void AGun::Shoot(FVector& LookAtTarget)
 	{
 		MuzzleParticleComp = UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MeshComponent, TEXT("MuzzleFlashSocket"));
 		MuzzleParticleComp->SetRelativeScale3D(FVector(0.5, 0.5, 0.5));
-	}	
+	}
+	// Play a sound
+	if (ShotAudioComp == nullptr) 
+	{
+		ShotAudioComp = UGameplayStatics::SpawnSound2D(GetWorld(), ShotLoopSound);
+	}
 	// Perform our shooting line trace
 	FHitResult HitResult;
 	FVector ShotDirection;
@@ -47,11 +53,17 @@ void AGun::Shoot(FVector& LookAtTarget)
 
 void AGun::Release() 
 {
-	// Stop particles if we stopped shooting
+	// Stop particles and sounds if we stopped shooting
 	if (MuzzleParticleComp != nullptr) 
 	{
 		MuzzleParticleComp->DestroyComponent();
 		MuzzleParticleComp = nullptr;
+	}
+	if (ShotAudioComp != nullptr) 
+	{
+		UGameplayStatics::SpawnSound2D(GetWorld(), ShotEndSound);
+		ShotAudioComp->DestroyComponent();
+		ShotAudioComp = nullptr;
 	}
 }
 

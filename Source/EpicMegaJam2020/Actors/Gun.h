@@ -35,9 +35,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UParticleSystem* HitEffect;
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	USoundBase* MuzzleSound;
+	USoundBase* ShotLoopSound;
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	USoundBase* ShotEndSound;
 
 	UParticleSystemComponent* MuzzleParticleComp;
+	UAudioComponent* ShotAudioComp;
 
 	bool GunTrace(FHitResult& OutHitResult, FVector& LookAtTarget);
 	AController* GetOwnerController() const;
