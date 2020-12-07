@@ -98,16 +98,15 @@ void APlayerCharacter::Rotate(FVector LookAtTarget)
 
 void APlayerCharacter::StartShooting() 
 {
-    if (!IsDead() && CanShoot)
-    {
-        Shoot();
-        CanShoot = false;
-        GetWorldTimerManager().SetTimer(ShootTimer, this, &APlayerCharacter::Shoot, FireRate, true);
-    }
+    if (IsDead() || !CanShoot) { return; }
+    Shoot();
+    CanShoot = false;
+    GetWorldTimerManager().SetTimer(ShootTimer, this, &APlayerCharacter::Shoot, FireRate, true);
 }
 
 void APlayerCharacter::Shoot() 
 {
+    if (IsDead()) { return; }
     // Raycast out from our mouse position into the world
     FHitResult HitResult;
     if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
@@ -127,11 +126,10 @@ void APlayerCharacter::StopShooting()
 
 void APlayerCharacter::HandleDeath() 
 {
-    UE_LOG(LogTemp, Warning, TEXT("Player Character Died!"));
+    StopShooting();
 }
 
 void APlayerCharacter::ResetCanShoot() 
 {
-    UE_LOG(LogTemp, Warning, TEXT("ResetCanShoot"));
     CanShoot = true;
 }
