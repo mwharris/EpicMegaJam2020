@@ -5,10 +5,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "TimerManager.h"
 
 APlayerCharacter::APlayerCharacter() 
 {
 	PrimaryActorTick.bCanEverTick = true;
+    CanShoot = true;
 
     PusherMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pusher Mesh"));
     PusherMesh->SetupAttachment(RootComponent);
@@ -47,7 +49,7 @@ void APlayerCharacter::SpawnGun()
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-    PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Shoot);
+    PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartShooting);
     PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Released, this, &APlayerCharacter::StopShooting);
 }
 
@@ -94,27 +96,42 @@ void APlayerCharacter::Rotate(FVector LookAtTarget)
     MainMesh->SetWorldRotation(Rotator);
 }
 
+void APlayerCharacter::StartShooting() 
+{
+    if (!IsDead() && CanShoot)
+    {
+        Shoot();
+        CanShoot = false;
+        GetWorldTimerManager().SetTimer(ShootTimer, this, &APlayerCharacter::Shoot, FireRate, true);
+    }
+}
+
 void APlayerCharacter::Shoot() 
 {
-    if (!IsDead())
+    // Raycast out from our mouse position into the world
+    FHitResult HitResult;
+    if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
     {
-        // Raycast out from our mouse position into the world
-        FHitResult HitResult;
-        if (PlayerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
-        {
-            // Pass this location to the Gun::Shoot method
-            FVector Target = FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, Gun->GetActorLocation().Z);
-            Gun->Shoot(Target);
-        }
+        // Pass this location to the Gun::Shoot method
+        FVector Target = FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, Gun->GetActorLocation().Z);
+        Gun->Shoot(Target);
     }
 }
 
 void APlayerCharacter::StopShooting() 
 {
+    CanShoot = true;
+    GetWorldTimerManager().ClearTimer(ShootTimer);
     Gun->Release();
 }
 
 void APlayerCharacter::HandleDeath() 
 {
     UE_LOG(LogTemp, Warning, TEXT("Player Character Died!"));
+}
+
+void APlayerCharacter::ResetCanShoot() 
+{
+    UE_LOG(LogTemp, Warning, TEXT("ResetCanShoot"));
+    CanShoot = true;
 }

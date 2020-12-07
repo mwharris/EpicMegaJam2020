@@ -33,20 +33,26 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AGun> GunClass;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	AGun* Gun;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	float FireRate = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float MovementSpeed = 100.f;
 
 	class USkeletalMeshComponent* MainMesh;
 	APlayerController* PlayerControllerRef;
+	FTimerHandle ShootTimer;
+	bool CanShoot;
 	
 	void MoveForward();
 	void RotateTowardsMouse();
 	void Rotate(FVector LookAtTarget);
 	void SpawnGun();
+	void StartShooting();
 	void Shoot();
 	void StopShooting();
+	void ResetCanShoot();
 
 };
