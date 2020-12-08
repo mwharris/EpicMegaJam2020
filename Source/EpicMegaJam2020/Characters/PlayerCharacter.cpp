@@ -59,7 +59,6 @@ void APlayerCharacter::Tick(float DeltaTime)
     if (!IsDead()) 
     {
         MoveForward();
-        RotateTowardsMouse();
     }
 }
 
