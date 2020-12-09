@@ -17,6 +17,7 @@ public:
 	void ActorDied(AActor* DeadActor);
 	void ActorDamaged(AActor* DamagedActor);
 	void SetSpawnBox(ASpawnBox* NewSpawnBox);
+	void AddSpawnBox(ASpawnBox* NewSpawnBox);
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,12 +36,21 @@ private:
 	int32 SpawnAmountMax = 2;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lifetime", meta = (AllowPrivateAccess = "true"))
 	bool GameOver;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	USoundBase* PlayerHurtSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	USoundBase* PlayerDeathSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	USoundBase* ZombieHurtSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	USoundBase* ZombieDeathSound;
 
 	class APlayerCharacter* PlayerCharacter;
 	FTimerHandle SpawnTimer;
-	ASpawnBox* SpawnBox;
+	TArray<ASpawnBox*> SpawnBoxes;
 
 	void SpawnEnemy();
 	int32 RandomSpawnAmount() const;
+	int32 RandomSpawnBox() const;
 	
 };

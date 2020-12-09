@@ -24,9 +24,24 @@ void ANotDoneYetGameMode::BeginPlay()
 
 void ANotDoneYetGameMode::SpawnEnemy() 
 {
-    if (SpawnBox != nullptr && !GameOver) 
+    if (SpawnBoxes.Num() > 0 && !GameOver) 
     {
-        SpawnBox->SpawnEnemies(RandomSpawnAmount());
+        int32 Index = RandomSpawnBox();
+        int32 NumSpawns = RandomSpawnAmount();
+        while (NumSpawns > 0) 
+        {
+            if (Index >= SpawnBoxes.Num()) 
+            {
+                Index = 0;
+            }
+            ASpawnBox* PossibleBox = SpawnBoxes[Index];
+            if (PossibleBox != nullptr)
+            {
+                PossibleBox->SpawnEnemies(1);
+            }
+            Index++;
+            NumSpawns--;
+        }
     }
 }
 
@@ -41,17 +56,29 @@ int32 ANotDoneYetGameMode::RandomSpawnAmount() const
     return SpawnAmount;    
 }
 
+int32 ANotDoneYetGameMode::RandomSpawnBox() const
+{
+    int32 SpawnIndex = 0;
+    if (SpawnBoxes.Num() > 0) 
+    {
+        SpawnIndex = FMath::RandRange(0, SpawnBoxes.Num() - 1);
+    }
+    return SpawnIndex;
+}
+
 void ANotDoneYetGameMode::ActorDied(AActor* DeadActor) 
 {
     if (DeadActor == PlayerCharacter) 
     {
         GameOver = true;
         GetWorldTimerManager().ClearTimer(SpawnTimer);
+		UGameplayStatics::SpawnSound2D(GetWorld(), PlayerDeathSound);
         UpdatePlayerHP(PlayerCharacter->GetHealth());
         PlayerCharacter->HandleDeath();
     }
     else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(DeadActor)) 
     {
+		UGameplayStatics::SpawnSound2D(GetWorld(), ZombieDeathSound);
         Enemy->HandleDeath();
     }
 }
@@ -60,11 +87,21 @@ void ANotDoneYetGameMode::ActorDamaged(AActor* DamagedActor)
 {
     if (APlayerCharacter* Player = Cast<APlayerCharacter>(DamagedActor)) 
     {
+		UGameplayStatics::SpawnSound2D(GetWorld(), PlayerHurtSound);
         UpdatePlayerHP(Player->GetHealth());
+    }
+    else 
+    {
+		UGameplayStatics::SpawnSound2D(GetWorld(), ZombieHurtSound);
     }
 }
 
 void ANotDoneYetGameMode::SetSpawnBox(ASpawnBox* NewSpawnBox) 
 {
-    SpawnBox = NewSpawnBox;
+    // SpawnBox = NewSpawnBox;
+}
+
+void ANotDoneYetGameMode::AddSpawnBox(ASpawnBox* NewSpawnBox) 
+{
+    SpawnBoxes.Add(NewSpawnBox);
 }

@@ -31,7 +31,8 @@ void ASpawnBox::BeginPlay()
 	GameModeRef = Cast<ANotDoneYetGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GameModeRef != nullptr) 
 	{
-		GameModeRef->SetSpawnBox(this);
+		// GameModeRef->SetSpawnBox(this);
+		GameModeRef->AddSpawnBox(this);
 	}
 }
 
