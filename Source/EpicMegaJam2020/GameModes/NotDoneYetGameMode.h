@@ -33,8 +33,9 @@ private:
 	int32 SpawnAmountMin = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Spawning", meta = (AllowPrivateAccess = "true"))
 	int32 SpawnAmountMax = 2;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Lifetime", meta = (AllowPrivateAccess = "true"))
 	bool GameOver;
+
 	class APlayerCharacter* PlayerCharacter;
 	FTimerHandle SpawnTimer;
 	ASpawnBox* SpawnBox;

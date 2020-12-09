@@ -47,6 +47,7 @@ void ANotDoneYetGameMode::ActorDied(AActor* DeadActor)
     {
         GameOver = true;
         GetWorldTimerManager().ClearTimer(SpawnTimer);
+        UpdatePlayerHP(PlayerCharacter->GetHealth());
         PlayerCharacter->HandleDeath();
     }
     else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(DeadActor)) 
