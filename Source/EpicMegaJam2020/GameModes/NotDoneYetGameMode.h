@@ -19,6 +19,11 @@ public:
 	void SetSpawnBox(ASpawnBox* NewSpawnBox);
 	void AddSpawnBox(ASpawnBox* NewSpawnBox);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowStoryDialogue(const FString& Name, const FString& Text);
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayerWon();
+
 protected:
 	virtual void BeginPlay() override;
 
